@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Product } from './Product'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const products = ref<Product[]>([]);
 const isLoading = ref(true);
+
+const searchQuery = ref('');
 
 const fetchProducts = async () => {
   try {
@@ -17,6 +19,16 @@ const fetchProducts = async () => {
   }
 };
 
+const filteredProducts = computed(() => {
+  if (!searchQuery.value.trim()) return products.value
+
+  const query = searchQuery.value.toLowerCase()
+
+  return products.value.filter(product =>
+    product.title.toLowerCase().includes(query)
+  )
+})
+
 onMounted(() => {
   fetchProducts()
 })
@@ -25,10 +37,14 @@ onMounted(() => {
 
 <template>
   <h1>Products</h1>
+  <input type="text" placeholder="Search products..." v-model="searchQuery" />
+
   <div v-if="isLoading">Loading products... </div>
   <ul>
-    <li v-for="product in products" :key="product.id">
+    <li v-for="product in filteredProducts" :key="product.id">
+      <img :src="product.image" alt="Product Image" width="50" />
       {{ product.title }} - ${{ product.price }}
+      <hr />
     </li>
   </ul>
 </template>
