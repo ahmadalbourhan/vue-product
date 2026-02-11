@@ -11,6 +11,8 @@ const searchCategory = ref('');
 
 const selectedProduct = ref<Product | null>(null);
 
+const isList = ref(true);
+
 const selectProduct = (product: Product) => {
   selectedProduct.value = product;
 };
@@ -72,7 +74,7 @@ onMounted(() => {
     <p>Price: ${{ selectedProduct.price }}</p>
     <p>Category: {{ selectedProduct.category }}</p>
     <p>Rating: {{ selectedProduct.rating.rate }} ({{ selectedProduct.rating.count }} reviews)</p>
-    <button @click="clearSelection" class="">Back to Products</button>
+    <button @click="clearSelection" class="border p-2 m-3 cursor-pointer">Back to Products</button>
 
   </div>
 
@@ -87,14 +89,26 @@ onMounted(() => {
       </option>
 
     </select>
+    <button @click="isList = !isList" class="border p-3 m-4">
+      {{ isList ? 'List View' : 'Grid View' }}
+    </button>
 
     <div v-if="isLoading">Loading products... </div>
-    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+    <ul v-if="isList" class="max-w-md mx-auto">
       <li v-for="product in filteredProducts" :key="product.id" @click="selectProduct(product)"
         class="bg-white p-4 m-3 shadow-sm transition-shadow cursor-pointer border border-gray-100 flex flex-col items-center text-center">
         <img :src="product.image" alt="Product Image" width="50" />
         {{ product.title }} - ${{ product.price }}
       </li>
     </ul>
+    <ul v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <li v-for="product in filteredProducts" :key="product.id" @click="selectProduct(product)"
+        class="bg-white p-4 m-3 shadow-sm transition-shadow cursor-pointer border border-gray-100 flex flex-col items-center text-center">
+        <img :src="product.image" alt="Product Image" width="50" />
+        {{ product.title }} - ${{ product.price }}
+      </li>
+    </ul>
+
   </div>
 </template>
