@@ -3,9 +3,11 @@ import { Product } from './Product'
 import { computed, onMounted, ref } from 'vue'
 
 const products = ref<Product[]>([]);
+const categories = ref<string[]>([]);
 const isLoading = ref(true);
 
 const searchQuery = ref('');
+const searchCategory = ref('');
 
 const fetchProducts = async () => {
   try {
@@ -19,18 +21,31 @@ const fetchProducts = async () => {
   }
 };
 
-const filteredProducts = computed(() => {
-  if (!searchQuery.value.trim()) return products.value
+const fetchCategories = async () => {
+  try {
+    const response = await fetch('https://fakestoreapi.com/products/categories');
+    categories.value = await response.json();
+    console.log('Fetched categories:', categories.value);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+};
 
-  const query = searchQuery.value.toLowerCase()
+const filteredProducts = computed(() => {
+  const query = searchQuery.value.toLowerCase().trim();
+  const category = searchCategory.value;
+
+  if (!query && !category) return products.value
+
 
   return products.value.filter(product =>
-    product.title.toLowerCase().includes(query)
+    product.title.toLowerCase().includes(query) && product.category === category
   )
 })
 
 onMounted(() => {
-  fetchProducts()
+  fetchProducts(),
+    fetchCategories()
 })
 
 </script>
@@ -38,6 +53,14 @@ onMounted(() => {
 <template>
   <h1>Products</h1>
   <input type="text" placeholder="Search products..." v-model="searchQuery" />
+
+  <select v-model="searchCategory">
+    <option value="">All Categories</option>
+    <option v-for="category in categories" :key="category" :value="category">
+      {{ category }}
+    </option>
+
+  </select>
 
   <div v-if="isLoading">Loading products... </div>
   <ul>
