@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Product } from './Product'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const products = ref<Product[]>([]);
 const isLoading = ref(true);
@@ -17,7 +17,9 @@ const fetchProducts = async () => {
   }
 };
 
-fetchProducts();
+onMounted(() => {
+  fetchProducts()
+})
 
 </script>
 
