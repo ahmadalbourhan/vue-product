@@ -48,8 +48,11 @@ const filteredProducts = computed(() => {
   if (!query && !category) return products.value
 
 
-  return products.value.filter(product =>
-    product.title.toLowerCase().includes(query) && product.category === category
+  return products.value.filter(product => {
+    const matchesQuery = product.title.toLowerCase().includes(query)
+    const matchesCategory = !category || product.category === category
+    return matchesQuery && matchesCategory
+  }
   )
 })
 

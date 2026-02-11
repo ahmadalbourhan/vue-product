@@ -13,3 +13,4 @@
 9. Install `tailwindcss` and `@tailwindcss/vite` via npm
 10. Add the `@tailwindcss/vite` plugin to your Vite configuration.
 11. Create `main.css` and add an `@import "tailwindcss";` to your CSS file that imports Tailwind CSS.
+12. Fix a bug in filteredProducts
